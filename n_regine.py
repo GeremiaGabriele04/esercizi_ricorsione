@@ -1,12 +1,13 @@
+import copy
 from contextlib import nullcontext
 from time import time
-
 
 class NRegine():
 
     def __init__(self):
         self.n_soluzioni = 0
         self.n_chiamate = 0
+        self.soluzioni = []
 
     #=============================APPROCCIO 2===========================
     #Rappresento soluzione come un vettore di N regine,
@@ -15,6 +16,7 @@ class NRegine():
     def solve2(self, N):
         self.n_soluzioni = 0
         self.n_chiamate = 0
+        self.soluzioni = []
         self._ricorsione2([], N)
 
     #parziale: un vettore di coppie (riga, colonna)
@@ -27,8 +29,10 @@ class NRegine():
             #if self._is_soluzione(parziale):    SUPERFLUO
             #    self.n_soluzioni += 1
             #    print(parziale)
-            self.n_soluzioni += 1
-            print(parziale)
+            if self._is_nuova_soluzione(parziale):
+                self.n_soluzioni += 1
+                self.soluzioni.append(copy.deepcopy(parziale))
+            #print(parziale)
 
         #caso ricorsivo: ho messo < N regine
         else:
@@ -76,6 +80,17 @@ class NRegine():
         return True
 
 
+    def _is_nuova_soluzione(self, soluzione_potenziale) -> bool:
+        N = len(soluzione_potenziale)
+        for soluzione in self.soluzioni:
+            counter = 0
+            for regina in soluzione_potenziale:
+                if regina in soluzione:
+                    counter+=1
+            if counter == N:
+                return False
+        return True
+
 
 if __name__ == '__main__':
     nreg = NRegine()
@@ -86,3 +101,4 @@ if __name__ == '__main__':
     print(f"Elapsed time: {end_time - start_time}")
     print(f"Ho trovato {nreg.n_soluzioni} soluzioni possibili")
     print(f"Chiamate effettuate: {nreg.n_chiamate}")
+    print(nreg.soluzioni)
